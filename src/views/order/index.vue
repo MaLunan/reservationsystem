@@ -22,7 +22,7 @@
                         <el-dropdown-item command="4人">4人</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
-                <div class="iconfont icon-cangpeitubiao_shanchu"></div>
+                <div class="iconfont icon-cangpeitubiao_shanchu" @click="delshop"></div>
             </div>
             <div class="shop_box">
                 <div class="isnull" v-if="JSON.stringify(shopdata)==='{}'">
@@ -233,6 +233,30 @@ export default {
                 ind:ind
             })
         },
+        //删除订单
+        delshop(){
+            this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            this.shopdata={}
+            this.foodList.map(item=>{
+              return item= item.map(itm=>{
+                    return itm.num=0
+                })
+            })
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+        },
         //删除商品
         setnum(label,tabActive,ind){
             console.log(label,tabActive,ind)
@@ -255,7 +279,7 @@ export default {
     width: 100%;
     display: flex;
     .left_box{
-        width: 400px;
+        width: 320px;
         height: 100%;
         border-right: 1px solid rgba(199, 199, 204, 0.699);
         padding: 24px;
@@ -385,7 +409,7 @@ export default {
 .shop_button{
     position: absolute;
     bottom: 24px;
-    width: 350px;
+    width: 272px;
     margin: 0 auto;
     background: chocolate;
     cursor: pointer;
