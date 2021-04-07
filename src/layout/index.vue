@@ -1,28 +1,34 @@
 <template>
     <div class="box">
         <div class="header">
-           <el-button @click="isCollapse=!isCollapse">默认按钮</el-button>
+           <el-button @click="isCollapse=!isCollapse" class="el-icon-s-fold" type='mini'></el-button>
         </div>
         <div class="middle">
             <div class="leftmenu">
                 <el-menu
-                default-active="2"
+                default-active="/order"
+                :router='true'
                 class="el-menu-vertical-demo"
+                :collapse-transition='false'
                 :collapse="isCollapse"
-                background-color="#545c64"
-                text-color="#fff"
+                background-color="rgb(41,131,187)"
+                text-color="white"
                 active-text-color="#ffd04b">
-                <el-menu-item index="2">
-                    <i class="el-icon-menu"></i>
-                    <span slot="title">导航二</span>
+                <el-menu-item index="/order">
+                    <i class="iconfont icon-tubiao-"></i>
+                    <span slot="title">收银</span>
                 </el-menu-item>
-                <el-menu-item index="3">
-                    <i class="el-icon-document"></i>
-                    <span slot="title">导航三</span>
+                <el-menu-item index="/diningTable">
+                    <i class="iconfont icon-zhuozi"></i>
+                    <span slot="title">订桌</span>
                 </el-menu-item>
-                <el-menu-item index="4">
-                    <i class="el-icon-setting"></i>
-                    <span slot="title">导航四</span>
+                <el-menu-item index="/moneyLocker">
+                    <i class="iconfont icon-guizi"></i>
+                    <span slot="title">钱柜</span>
+                </el-menu-item>
+                <el-menu-item index="/toUp">
+                    <i class="iconfont icon-chongzhi1"></i>
+                    <span slot="title">充值</span>
                 </el-menu-item>
                 </el-menu>
             </div>
@@ -43,8 +49,7 @@ export default {
     }
 }
 </script>
-
-<style lang="less">
+<style lang="less" scoped>
 .box{
     height: 100%;
 }
@@ -52,8 +57,11 @@ export default {
     height: 60px;
     position: fixed;
     top:0px;
-    background: red;
     width: 100%;
+    line-height: 60px;
+    text-align: left;
+    padding:0 24px;
+    border-bottom: 1px solid rgba(199, 199, 204, 0.699);
 }
 .leftmenu{
     float:left;
@@ -65,11 +73,15 @@ export default {
 }
 .middle{
     height: 100%;
-    padding-top: 60px;
+    padding-top: 61px;
     box-sizing: border-box;
 }
 .el-menu{
     height: 100%;
-    width: 150px;
+    // width: 150px;
+}
+.iconfont{
+    font-size: 18px;
+    color: white;
 }
 </style>

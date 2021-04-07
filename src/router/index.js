@@ -13,7 +13,40 @@ const routes = [
         path: 'order',
         component: () => import('@/views/order/index'),
         name: 'order',
-        meta: { title: '首页', icon: 'el-icon-goods', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/diningTable',
+    component: Layout,
+    children: [
+      {
+        path: '/diningTable',
+        component: () => import('@/views/diningTable/index'),
+        name: 'diningTable',
+      }
+    ]
+  },
+  {
+    path: '/moneyLocker',
+    component: Layout,
+    children: [
+      {
+        path: '/moneyLocker',
+        component: () => import('@/views/moneyLocker/index'),
+        name: 'moneyLocker',
+      }
+    ]
+  },
+  {
+    path: '/toUp',
+    component: Layout,
+    redirect: '/toUp',
+    children: [
+      {
+        path: '/toUp',
+        component: () => import('@/views/toUp/index'),
+        name: 'toUp',
       }
     ]
   },
