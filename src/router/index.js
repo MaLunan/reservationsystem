@@ -39,14 +39,14 @@ const routes = [
     ]
   },
   {
-    path: '/toUp',
+    path: '/orderdetail',
     component: Layout,
-    redirect: '/toUp',
+    redirect: '/orderdetail',
     children: [
       {
-        path: '/toUp',
-        component: () => import('@/views/toUp/index'),
-        name: 'toUp',
+        path: '/orderdetail',
+        component: () => import('@/views/orderdetail/index'),
+        name: 'orderdetail',
       }
     ]
   },

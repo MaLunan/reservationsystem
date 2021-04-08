@@ -16,7 +16,7 @@
                 active-text-color="#ffd04b">
                 <el-menu-item index="/order">
                     <i class="iconfont icon-tubiao-"></i>
-                    <span slot="title">收银</span>
+                    <span slot="title">点餐</span>
                 </el-menu-item>
                 <el-menu-item index="/diningTable">
                     <i class="iconfont icon-zhuozi"></i>
@@ -26,9 +26,9 @@
                     <i class="iconfont icon-guizi"></i>
                     <span slot="title">钱柜</span>
                 </el-menu-item>
-                <el-menu-item index="/toUp">
+                <el-menu-item index="/orderdetail">
                     <i class="iconfont icon-chongzhi1"></i>
-                    <span slot="title">充值</span>
+                    <span slot="title">订单详情</span>
                 </el-menu-item>
                 </el-menu>
             </div>
