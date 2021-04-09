@@ -3,14 +3,14 @@ import {Message,Loading} from 'element-ui';
 
 var instance = axios.create({
   timeout: 30000,
-  //baseURL : "/api",
-  baseURL : process.env.NODE_ENV === 'production'? '/' :'/api'
-  // withCredentials: true,
-  // headers: {
-  //   'Content-Type': 'application/json; charset=utf-8',
-  //   //'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-  //   //'X-Requested-With': 'XMLHttpRequest'  
-  // }
+  baseURL : "/api",
+  // baseURL : process.env.NODE_ENV === 'production'? '/' :'/api',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json; charset=utf-8',
+    //'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+    //'X-Requested-With': 'XMLHttpRequest'  
+  }
 });
 
 let loading ;
@@ -112,8 +112,4 @@ instance.interceptors.response.use(function (response) {
 });
 
 
-export default {
-  install(Vue, options) {
-    Vue.$http = instance
-  }
-}
+export default instance

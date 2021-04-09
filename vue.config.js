@@ -26,30 +26,30 @@ module.exports = {
 
         https: false,
 
-        // proxy: {
+        proxy: {
 
-            // '/api': {
+            '/api': {
 
-            //     target: "http://app.rmsdmedia.com",
+                target: "http://localhost:3000",
 
-            //     changeOrigin: true,//开启代理  在本地创造一个虚拟服务端
-            //      ws:true//是否启用Websockets
+                changeOrigin: true,//开启代理  在本地创造一个虚拟服务端
+                //  ws:true//是否启用Websockets
 
-            //     secure: false,
+                secure: false,
 
-            //     pathRewrite: {
+                pathRewrite: {
 
-            //         "^/api": ""
+                    "^/api": ""
 
-            //     }
+                }
 
-            // },
+            },
 
             // '/foo': {
 
             //     target: '<other_url>'
 
-            // }
+            }
 
         // }, // string | Object
 
