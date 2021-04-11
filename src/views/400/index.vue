@@ -1,5 +1,5 @@
 <template>
-  <div>充值</div>
+  <div>404</div>
 </template>
 
 <script>

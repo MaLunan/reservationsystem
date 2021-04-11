@@ -46,7 +46,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="shop_button">
+            <div class="shop_button" @click="payment">
                 付款 ￥ {{moneynum}}
             </div>
       </div>
@@ -210,7 +210,26 @@ export default {
             return num.toFixed(1)
         }
     },
+    
     methods: {
+        //付款
+        payment(){
+        console.log(this.shopdata,this.way,this.num)
+            let data={
+                people:this.num,
+                way:this.way,
+                goods:this.shopdata
+            }
+            this.$axios({
+                url:'/Reservation/addorder',
+                method:'post',
+                data
+            }).then(res=>{
+                console.log(res)
+            }).catch(err=>{
+                console.log(err)
+            })
+        },
         handleCommand(command){
             console.log(command)
             this.way=command
@@ -227,7 +246,7 @@ export default {
             console.log(this.shopdata)
             this.$set(this.foodList[this.tabActive][ind],'num',this.foodList[this.tabActive][ind].num+1-0)
             this.$set(this.shopdata,this.foodList[this.tabActive][ind].label,{
-                value:this.foodList[this.tabActive][ind].value,
+                value:Number(this.foodList[this.tabActive][ind].value),
                 num:this.foodList[this.tabActive][ind].num,
                 tabActive:this.tabActive,
                 ind:ind
@@ -273,7 +292,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .order{
     height: 100%;
     width: 100%;
