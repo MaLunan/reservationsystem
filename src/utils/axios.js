@@ -44,14 +44,10 @@ instance.interceptors.request.use(function (config) {
 // 添加响应拦截器
 instance.interceptors.response.use(function (response) {
   closeFullScreen();
-  console.log(response  )
-  //为枚举类型提供
-  console.log(response)
   // if(Object.prototype.toString.call(response.data) === '[object Array]'){
-  //   console.log(3333333)
   //   return response.data;
   // }
-  if(response.data.success){
+  if(response.data.code===200){
     return response.data.data;
   }else{
     Message.error(response.data.msg);

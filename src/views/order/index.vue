@@ -49,7 +49,14 @@
             <div class="shop_button" @click="payment">
                 付款 ￥ {{moneynum}}
             </div>
-      </div>
+                <el-dialog
+                title="付款"
+                :visible.sync="fukuanDialog"
+                width="30%">
+                <img style="width:100%" src="@/assets/image/fukuan.png" alt="">
+            </el-dialog>
+
+      </div> 
       <div class="centreone_box">
             <div class="tab_block">备注</div>
             <div class="tab_block">挂起</div>
@@ -80,6 +87,7 @@ export default {
             way:"堂食",
             num:"1人",
             classify:['饮料','小吃','披萨'],
+            fukuanDialog:false,
             foodList:[
                 [
                     {
@@ -214,21 +222,38 @@ export default {
     methods: {
         //付款
         payment(){
-        console.log(this.shopdata,this.way,this.num)
-            let data={
+            if(Object.keys(this.shopdata).length===0) return this.$message({
+          message: '当前暂无商品',
+          type: 'warning'
+        });
+         this.fukuanDialog=true
+            setTimeout(() => {
+                let data={
                 people:this.num,
                 way:this.way,
                 goods:this.shopdata
-            }
-            this.$axios({
-                url:'/Reservation/addorder',
-                method:'post',
-                data
-            }).then(res=>{
-                console.log(res)
-            }).catch(err=>{
-                console.log(err)
-            })
+                }
+                this.$axios({
+                    url:'/Reservation/addorder',
+                    method:'post',
+                    data
+                }).then(res=>{
+                    this.$message({
+                        message: '付款成功',
+                        type: 'success'
+                        });
+                    this.shopdata={}
+                    this.foodList.map(item=>{
+                    return item= item.map(itm=>{
+                            return itm.num=0
+                        })
+                    })
+                }).catch(err=>{
+                   this.$message.error('付款失败')
+                })
+                this.fukuanDialog=false
+            }, 3000);
+            
         },
         handleCommand(command){
             console.log(command)
