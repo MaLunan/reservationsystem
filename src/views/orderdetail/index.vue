@@ -2,43 +2,29 @@
   <div class="order">
       <div class="left_box">
           <div class="left_title">
-            <div :class="['tab',active===0?'active':'']" @click="setTab(0)">
+            <div :class="['tab',active==='all'?'active':'']" @click="setTab('all')">
                 全部
             </div>
-            <div :class="['tab',active===1?'active':'']"  @click="setTab(1)">
+            <div :class="['tab',active==='1'?'active':'']"  @click="setTab('1')">
                 已记账
             </div>
-            <div :class="['tab',active===2?'active':'']"  @click="setTab(2)">
+            <div :class="['tab',active==='0'?'active':'']"  @click="setTab('0')">
                 未结账
             </div>
           </div>
           <ul class="left_ul">
-            <li class="left_li">
+            <li class="left_li" v-for="(item,index) in dataList" :key="index" @click="setorder(item)">
               <div class="imgbox">
                 <i class="el-icon-s-platform"></i>
               </div>
               <h1 class="content_titles">流水号5</h1>
-              <span class="way">堂食</span>
-              <div class="remark">已结账</div>
+              <span class="way">{{item.way}}</span>
+              <div class="remark" v-if="item.state==='1'">已结账</div>
               <div class="msg">
                   <p class="money">
-                    ￥2.24
+                    ￥{{item.amount}}
                   </p>
-                  <p class="date">12:14</p>
-              </div>
-            </li>
-            <li class="left_li">
-              <div class="imgbox">
-                <i class="el-icon-s-platform"></i>
-              </div>
-              <h1 class="content_titles">流水号5</h1>
-              <span class="way">堂食</span>
-              <div class="remark">已结账</div>
-              <div class="msg">
-                  <p class="money">
-                    ￥2.24
-                  </p>
-                  <p class="date">12:14</p>
+                  <p class="date">{{item.creation}}</p>
               </div>
             </li>
           </ul>
@@ -46,13 +32,13 @@
       <div class="right_box">
           <div class="right_title">
             <div class="left">
-              订单号：121231321465456
+              订单号：{{orderList.ordernumber}}
             </div>
             <div class="right left24">
-              5人
+              {{orderList.people}}
             </div>
             <div class="right">
-              堂食
+             {{orderList.way}}
             </div>
             
           </div>
@@ -62,7 +48,7 @@
             </div>
             <div class="right">
               <!-- <span class="datetext">支付时间 ： 2020-10-11 10:25</span> -->
-              <span class="nopayment">未支付</span>
+              <span class="nopayment">{{orderList.state==='1'?'已支付':'未支付'}}</span>
             </div>
           </div>
           <div class="content_box">
@@ -71,25 +57,26 @@
                 <th>商品名</th>
                 <th>单价</th>
                 <th>数量</th>
+                <th>备注</th>
               </tr>
-              <tr>
-                <td>January</td>
-                <td>$100</td>
-                <td>$100</td>
+              <tr style="line-height:1.5em;" v-for="(item,key) in orderList.goods" :key="item">
+                <td>{{key}}</td>
+                <td>{{item.value}}</td>
+                <td>{{item.num}}</td>
+                <td style="width:200px">{{item.remark}}</td>
               </tr>
             </table>
           </div>
           <div class="content_foot clearfix">
             <div class="left count">
-              商品总计：222
             </div>
             <div class="right count">
-              总计：￥121654
+              总计：￥{{orderList.amount}}
             </div>
           </div>
           <div class="btn_box">
-            <el-button>结账</el-button>
-            <el-button>退款</el-button>
+            <el-button v-if="orderList.state!=='1'">结账</el-button>
+            <el-button v-else>退款</el-button>
           </div>
       </div>
   </div>
@@ -99,13 +86,39 @@
 export default {
     data(){
         return {
-          active:0
+          active:'all',
+          dataList:[],
+          orderList:{}
         }
     },
-
+    created () {
+      this.getorder()
+    },
     methods: {
+      //tab切换
       setTab(ind){
         this.active=ind
+        this.getorder()
+      },
+      //获取订单信息
+      getorder(){
+        this.$axios({
+              url:'/Reservation/getorderSelect',
+              method:'post',
+              data:{
+                state: this.active
+              }
+          }).then(res=>{
+            console.log(res)
+             this.dataList=res
+             this.orderList=res[0]
+          }).catch(err=>{
+              console.log(err)
+          })
+      },
+      //切换订单
+      setorder(val){
+        this.orderList=val
       }
     }
 }
@@ -191,7 +204,8 @@ export default {
   margin-left: 24px;
 }
 .msg{
-  margin-left: 80px;
+  flex: 1;
+  text-align: center;
 }
 .date{
   margin-top: 4px;
@@ -214,7 +228,7 @@ export default {
   background: white;
   padding: 24px;
   margin-top: 24px;
-  max-height: 600px;
+  max-height: 530px;
   overflow: auto;
 }
 table{

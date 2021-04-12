@@ -2,48 +2,58 @@
   <div class="order clearfix">
       <div class="left_box">
         <ul class="dining_ul">
-          <li class="dining_li">
+          <li class="dining_li" v-for="(item,index) in deskdata" :key="index" @click="getorder(item.state,item.orderID)">
               <div>
-                <p class="ding_title">餐桌01</p>
-                <p class="ding_text">4人桌</p>
+                <p class="ding_title">{{item.ID}}号桌</p>
+                <p class="ding_text">{{item.person}}人桌</p>
               </div>
-              <div class="dining_footer dining_bluecolor">
-                空
+              <div :class="['dining_footer',item.state!=='0'?'dining_greencolor':'dining_bluecolor']">
+                {{item.state!=='0'?'在用':'空'}}
               </div>
-          </li>
-          <li class="dining_li">
-              <div>
-                <p class="ding_title">餐桌01</p>
-                <p class="ding_text">4人桌</p>
-              </div>
-              <div class="dining_footer dining_greencolor">在 用</div>
           </li>
         </ul>
       </div>
       <div class="right_box">
-        
             <div class="content_title">订单详情</div>
-            <div class="content_box">
-                <div class="shopnav">
+            <div v-if="Object.keys(this.shopdata).length===0">无订单信息</div>
+            <div class="content_box"  v-else>
+              <div class="tablebox">
+                <table>
+                  <tr>
+                    <th>商品名</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>备注</th>
+                  </tr>
+                  <tr style="line-height:1.5em;" v-for="(item,key) in shopdata.goods" :key="item">
+                    <td>{{key}}</td>
+                    <td>{{item.value}}</td>
+                    <td>{{item.num}}</td>
+                    <td style="width:200px">{{item.remark}}</td>
+                  </tr>
+                </table>
+              </div>
+                <!-- <div class="shopnav">
                   <div  class="shop_li"> 
                       <span class="shop_span shop_title">商品名</span>
                       <span class="shop_span shop_title">单价</span>
                       <span class="shop_span shop_title">数量</span>
-                      <!-- <span class="shop_span shop_title">合计</span> -->
+                      <span class="shop_span shop_title">备注</span>
                   </div>
                   <ul  class="shop_ul">
-                      <li class="shop_li" v-for="(item,label) in shopdata" :key="label">
+                      <li class="shop_li" v-for="(item,label) in shopdata.goods" :key="label">
                           <span class="shop_span">{{label}}</span>
                           <span class="shop_span"> {{item.value}}</span>
                           <span class="shop_span"> {{item.num}}</span>
+                          <span class="shop_span"> {{item.remark}}</span>
                       </li>
                   </ul>
-              </div>
+              </div> -->
               <div class="content_footer"> 
-                <span class="left">结算金额：￥12.8</span><span class="right">就餐人数：1人</span>
+                <span class="left">结算金额：￥{{shopdata.amount}}</span><span class="right">就餐人数：{{shopdata.people}}</span>
               </div>
               <div class="content_btn">
-                <el-button type='mini'>去结账</el-button>
+                <el-button  :disabled="shopdata.state!=='0'">{{shopdata.state!=='0'?'已结账':'去结账'}}</el-button>
               </div>
             </div>
       </div>
@@ -54,16 +64,42 @@
 export default {
     data(){
         return {
-          shopdata:{
-              liyu:{
-                num:2,
-                value:3.2
-              }
-            }
+          shopdata:{},
+          deskdata:[]
         }
     },
-
+    created () {
+      this.getDesk()
+    },
     methods: {
+      //获取餐桌数据
+      getDesk(){
+        this.$axios({
+            url:'/Reservation/getdesk',
+            method:'post',
+            }).then(res=>{
+                this.deskdata=res
+            }).catch(err=>{
+                console.log(err)
+            })
+      },
+      //获取订单信息
+      getorder(state,ordernumber){
+        this.shopdata={}
+       if(!ordernumber||state==='0') return 
+        this.$axios({
+            url:'/Reservation/getorder',
+            method:'post',
+            data:{
+              ordernumber
+            }
+            }).then(res=>{
+              console.log(res)
+                this.shopdata=res
+            }).catch(err=>{
+                this.$message.error('获取订单失败')
+            })
+      }
     }
 }
 </script>
@@ -81,7 +117,7 @@ export default {
         box-sizing: border-box;
     }
     .right_box{
-       width: 600px;
+       width: 730px;
         height: 100%;
         border-right:1px solid rgba(199, 199, 204, 0.699);
         border-left: 1px solid rgba(199, 199, 204, 0.699);
@@ -131,30 +167,6 @@ export default {
   font-weight: bold;
   padding: 0 24px;
 }
-.shopnav{
-    padding: 24px 0;
-}
-.shop_ul{
-    max-height: 670px;
-    overflow: auto;
-}
-.shop_li{
-        font-size: 16px;
-        .shop_span{
-            display: inline-block;
-            width: 180px;
-            text-align: center;
-            margin-bottom: 14px;
-        }
-        .shop_title{
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .shop_icon{
-            cursor: pointer;
-            color: #409EFF;
-        }
-    }
 .content_footer{
   overflow: hidden;
   padding: 24px;
@@ -162,5 +174,24 @@ export default {
 .content_btn{
   text-align: right;
   padding:0 24px;
+}
+.content_box{
+  padding:0 12px;
+}
+.tablebox{
+  max-height: 700px;
+  overflow: auto;
+}
+table{
+  width: 100%;
+  text-align: center;
+  line-height: 50px;
+}
+th{
+  height: 50px;
+  color: rgb(209, 209, 209);
+}
+td{
+  height: 50px;
 }
 </style>

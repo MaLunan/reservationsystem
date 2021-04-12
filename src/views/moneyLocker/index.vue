@@ -75,6 +75,22 @@ export default {
     return{
       dateValue:''
     }
+  },
+  methods: {
+    getdata(){
+       this.$axios({
+            url:'/Reservation/getorder',
+            method:'post',
+            data:{
+              ordernumber
+            }
+            }).then(res=>{
+              console.log(res)
+                this.shopdata=res
+            }).catch(err=>{
+                this.$message.error('获取订单失败')
+            })
+    }
   }
 }
 </script>

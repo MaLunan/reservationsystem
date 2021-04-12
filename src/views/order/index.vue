@@ -58,8 +58,50 @@
 
       </div> 
       <div class="centreone_box">
-            <div class="tab_block">备注</div>
-            <div class="tab_block">挂起</div>
+            <div class="tab_block" @click="opendesk">选择餐桌</div>
+            <div class="tab_block" @click="openRemark">备注</div>
+            <div class="tab_block" @click="hangUp">挂起</div>
+            <el-dialog
+            title="选择餐桌"
+            :visible.sync="deskShow"
+            width="30%"
+            >
+             <el-select v-model="desks" placeholder="请选择">
+                <el-option
+                v-for="item,index in deskSelect"
+                :key="index"
+                :label="item.ID+'号桌'+(item.state!=='0'?'(在用)':'')"
+                :value="item.ID"
+                :disabled="item.state!=='0'">
+                </el-option>
+            </el-select>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="setdesk">确 定</el-button>
+            </span>
+            </el-dialog>
+            <el-dialog
+            title="设置备注"
+            :visible.sync="remarkShow"
+            width="30%"
+            >
+             <el-select v-model="remarkSelect" placeholder="请选择">
+                <el-option
+                v-for="item,key in shopdata"
+                :key="key"
+                :label="key"
+                :value="key">
+                </el-option>
+            </el-select>
+            <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            v-model="remark">
+            </el-input>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="setRemark">确 定</el-button>
+            </span>
+            </el-dialog>
       </div>
       <div class="centretwo_box">
             <ul class="commodity_ul clearfix">
@@ -87,7 +129,14 @@ export default {
             way:"堂食",
             num:"1人",
             classify:['饮料','小吃','披萨'],
+            desk:'',
             fukuanDialog:false,
+            remarkShow:false,
+            remark:'',
+            remarkSelect:'',
+            deskShow:false,
+            desks:'',
+            deskSelect:[],
             foodList:[
                 [
                     {
@@ -226,12 +275,69 @@ export default {
           message: '当前暂无商品',
           type: 'warning'
         });
+        if(!this.desk) return this.$message({
+          message: '请选择餐桌',
+          type: 'warning'
+        });
          this.fukuanDialog=true
             setTimeout(() => {
                 let data={
                 people:this.num,
                 way:this.way,
-                goods:this.shopdata
+                goods:this.shopdata,
+                desk:this.desk,
+                amount:this.moneynum
+                }
+                this.$axios({
+                    url:'/Reservation/addorder',
+                    method:'post',
+                    data
+                }).then(res=>{
+                    console.log(res)
+                    this.$axios({
+                    url:'/Reservation/setorder',
+                    method:'post',
+                    data:{
+                        ordernumber:res.ordernumber,
+                    }
+                    }).then(res=>{
+                        this.$message({
+                            message: '付款成功',
+                            type: 'success'
+                            });
+                        this.shopdata={}
+                        this.foodList.map(item=>{
+                        return item= item.map(itm=>{
+                                return itm.num=0
+                            })
+                        })
+                    }).catch(err=>{
+                    this.$message.error('付款失败,可在订单页面重新付款')
+                    })
+                }).catch(err=>{
+                   this.$message.error('付款失败')
+                })
+                this.fukuanDialog=false
+            }, 3000);
+            
+        },
+        
+        //挂起
+        hangUp(){
+        if(Object.keys(this.shopdata).length===0) return this.$message({
+          message: '当前暂无商品',
+          type: 'warning'
+        });
+        if(!this.desk) return this.$message({
+          message: '请选择餐桌',
+          type: 'warning'
+        });
+                let data={
+                people:this.num,
+                way:this.way,
+                goods:this.shopdata,
+                desk:this.desk,
+                amount:this.moneynum
                 }
                 this.$axios({
                     url:'/Reservation/addorder',
@@ -239,7 +345,7 @@ export default {
                     data
                 }).then(res=>{
                     this.$message({
-                        message: '付款成功',
+                        message: '订单已生成,可在订单模块查看',
                         type: 'success'
                         });
                     this.shopdata={}
@@ -249,11 +355,8 @@ export default {
                         })
                     })
                 }).catch(err=>{
-                   this.$message.error('付款失败')
+                   this.$message.error('订单生成失败')
                 })
-                this.fukuanDialog=false
-            }, 3000);
-            
         },
         handleCommand(command){
             console.log(command)
@@ -265,6 +368,37 @@ export default {
         //选择小吃分类
         selectTab(ind){
             this.tabActive=ind
+        },
+        //备注弹窗
+        openRemark(){
+            this.remarkSelect=''
+            this.remark=''
+            this.remarkShow=true
+        },
+        //设置备注
+        setRemark(){
+            this.shopdata[this.remarkSelect].remark=this.remark
+            this.remarkShow=false
+        },
+        //餐桌弹窗
+        opendesk(){
+            this.desk=''
+            this.desks=''
+             this.deskSelect=[]
+            this.$axios({
+                    url:'/Reservation/getdesk',
+                    method:'post'
+                }).then(res=>{
+                    this.deskSelect=res
+                }).catch(err=>{
+                   console.log(err)
+                })
+            this.deskShow=true
+        },
+        //选择餐桌
+        setdesk(){
+            this.desk=this.desks
+            this.deskShow=false
         },
         //添加商品
         pushshop(ind){
