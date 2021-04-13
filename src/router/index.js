@@ -10,11 +10,16 @@ const routes = [
     redirect: '/order',
     children: [
       {
-        path: 'order',
+        path: '/order',
         component: () => import('@/views/order/index'),
-        name: 'order',
+        name: '/order',
       }
     ]
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login/index'),
+    name: '/login',
   },
   {
     path: '/diningTable',

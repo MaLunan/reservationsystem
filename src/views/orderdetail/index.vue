@@ -29,13 +29,17 @@
             </li>
           </ul>
       </div>
-      <div class="right_box">
+      <div class="right_box" v-if="!orderList.ordernumber">
+        <div class="right_title">暂无订单信息</div>
+        <img src="@/assets/image/wudingdan.png" alt="">
+      </div>
+      <div class="right_box" v-else>
           <div class="right_title">
             <div class="left">
               订单号：{{orderList.ordernumber}}
             </div>
             <div class="right left24">
-              {{orderList.people}}
+              {{orderList.people}}人
             </div>
             <div class="right">
              {{orderList.way}}
@@ -59,7 +63,7 @@
                 <th>数量</th>
                 <th>备注</th>
               </tr>
-              <tr style="line-height:1.5em;" v-for="(item,key) in orderList.goods" :key="item">
+              <tr style="line-height:1.5em;" v-for="(item,key) in orderList.goods" :key="key">
                 <td>{{key}}</td>
                 <td>{{item.value}}</td>
                 <td>{{item.num}}</td>
@@ -110,8 +114,14 @@ export default {
               }
           }).then(res=>{
             console.log(res)
-             this.dataList=res
-             this.orderList=res[0]
+            if(res.length){
+               this.dataList=res
+              this.orderList=res[0]
+            }else{
+              this.dataList=[]
+              this.orderList={}
+            }
+            
           }).catch(err=>{
               console.log(err)
           })
@@ -205,7 +215,7 @@ export default {
 }
 .msg{
   flex: 1;
-  text-align: center;
+  text-align: right;
 }
 .date{
   margin-top: 4px;

@@ -2,15 +2,17 @@
   <div class="moneyLocker">
       <div class="money_title clearfix">
           <div class="left">
-            <h1 class="money_left_text">2020-10-25</h1>
+            <h1 class="money_left_text">{{dateNum}}</h1>
           </div>
           <div class="right">
             <el-date-picker
               v-model="dateValue"
               type="date"
+              :clearable='false'
+              value-format='timestamp'
               placeholder="选择日期">
             </el-date-picker>
-             <el-button type="success">查询</el-button>
+             <el-button type="success" @click="getpigData">查询</el-button>
           </div>
       </div>
       <div class="money_statistics">
@@ -24,8 +26,8 @@
                 <h1 class="title_text">
                     营业额(元)
                 </h1>
-                <p class="money_num">134568</p>
-                <div class="span_box"><span class="money_span">成交：24</span><span>退款：16</span></div>
+                <p class="money_num">{{datalist.amount}}</p>
+                <div class="span_box"><span class="money_span">成交：{{datalist.Tamount}}</span><span>退款：{{datalist.Famount}}</span></div>
               </div>
             </div>
             <div class="clearfix content_box">
@@ -36,8 +38,8 @@
                 <h1 class="title_text">
                     订单(单)
                 </h1>
-                <p class="money_num">134568</p>
-                <div class="span_box"><span class="money_span">成交：24</span><span>退款：16</span></div>
+                <p class="money_num">{{datalist.ordernumber}}</p>
+                <div class="span_box"><span class="money_span">成交：{{datalist.Tordernumber}}</span><span>退款：{{datalist.Fordernumber}}</span></div>
               </div>
             </div>
             <div class="clearfix content_box">
@@ -48,8 +50,7 @@
                 <h1 class="title_text">
                     订桌(单)
                 </h1>
-                <p class="money_num">134568</p>
-                <div class="span_box"><span class="money_span">成交：24</span><span>退款：16</span></div>
+                <p class="money_num">{{datalist.way}}</p>
               </div>
             </div>
             <div class="clearfix content_box">
@@ -60,8 +61,7 @@
                 <h1 class="title_text">
                     就餐人数(人)
                 </h1>
-                <p class="money_num">134568</p>
-                <div class="span_box"><span class="money_span">成交：24</span><span>退款：16</span></div>
+                <p class="money_num">{{datalist.people}}</p>
               </div>
             </div>
         </div>
@@ -73,24 +73,46 @@
 export default {
   data(){
     return{
-      dateValue:''
+      dateValue:'',
+      dateNum:'',
+      datalist:{}
     }
   },
+  created () {
+    this.dateValue=new Date().getTime()
+    this.getpigData()
+  },
+
   methods: {
-    getdata(){
+    getpigData(){
+      this.dateNum=this.formatDate(this.dateValue)
        this.$axios({
-            url:'/Reservation/getorder',
+            url:'/Reservation/getpigData',
             method:'post',
             data:{
-              ordernumber
+              date:this.dateValue
             }
             }).then(res=>{
               console.log(res)
-                this.shopdata=res
+                this.datalist=res
             }).catch(err=>{
-                this.$message.error('获取订单失败')
+                this.$message.error('获取数据失败')
             })
-    }
+    },
+    formatDate(timestamp) {
+        var date = new Date(timestamp);
+        var year = date.getFullYear();
+        var month = this.addZero(date.getMonth() + 1);
+        var day = this.addZero(date.getDate());
+        var hours = this.addZero(date.getHours());
+        var minutes = this.addZero(date.getMinutes());
+        var seconds = this.addZero(date.getSeconds());
+        // return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+        return year + '-' + month + '-' + day;
+      },
+      addZero(num) {
+        return num < 10 ? '0' + num : num;
+      }
   }
 }
 </script>

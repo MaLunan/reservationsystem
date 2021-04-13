@@ -2,7 +2,7 @@
   <div class="order clearfix">
       <div class="left_box">
         <ul class="dining_ul">
-          <li class="dining_li" v-for="(item,index) in deskdata" :key="index" @click="getorder(item.state,item.orderID)">
+          <li class="dining_li" v-for="(item,index) in deskdata" :key="index" @click="getorder(item.state,item.orderID,item.ID)">
               <div>
                 <p class="ding_title">{{item.ID}}号桌</p>
                 <p class="ding_text">{{item.person}}人桌</p>
@@ -25,7 +25,7 @@
                     <th>数量</th>
                     <th>备注</th>
                   </tr>
-                  <tr style="line-height:1.5em;" v-for="(item,key) in shopdata.goods" :key="item">
+                  <tr style="line-height:1.5em;" v-for="(item,key) in shopdata.goods" :key="key">
                     <td>{{key}}</td>
                     <td>{{item.value}}</td>
                     <td>{{item.num}}</td>
@@ -53,8 +53,15 @@
                 <span class="left">结算金额：￥{{shopdata.amount}}</span><span class="right">就餐人数：{{shopdata.people}}</span>
               </div>
               <div class="content_btn">
-                <el-button  :disabled="shopdata.state!=='0'">{{shopdata.state!=='0'?'已结账':'去结账'}}</el-button>
+                <el-button @click="payment"  :disabled="shopdata.state!=='0'">{{shopdata.state!=='0'?'已结账':'去结账'}}</el-button>
+                <el-button v-if="shopdata.state!=='0'" @click="setdesk">离桌</el-button>
               </div>
+              <el-dialog
+                title="付款"
+                :visible.sync="fukuanDialog"
+                width="30%">
+                <img style="width:100%" src="@/assets/image/fukuan.png" alt="">
+              </el-dialog>
             </div>
       </div>
   </div>
@@ -65,13 +72,36 @@ export default {
     data(){
         return {
           shopdata:{},
-          deskdata:[]
+          deskdata:[],
+          ID:'',
+          fukuanDialog:false
         }
     },
     created () {
       this.getDesk()
     },
     methods: {
+      //付款
+      payment(){
+        setTimeout(() => {
+            this.$axios({
+                url:'/Reservation/setorder',
+                method:'post',
+                data:{
+                    ordernumber:this.shopdata.ordernumber,
+                }
+                }).then(res=>{
+                    this.$message({
+                        message: '付款成功',
+                        type: 'success'
+                        });
+                    this.getDesk()
+                }).catch(err=>{
+                this.$message.error('付款失败')
+                })
+            this.fukuanDialog=false
+        }, 3000);
+      },
       //获取餐桌数据
       getDesk(){
         this.$axios({
@@ -84,7 +114,8 @@ export default {
             })
       },
       //获取订单信息
-      getorder(state,ordernumber){
+      getorder(state,ordernumber,ID){
+        this.ID=ID
         this.shopdata={}
        if(!ordernumber||state==='0') return 
         this.$axios({
@@ -98,6 +129,22 @@ export default {
                 this.shopdata=res
             }).catch(err=>{
                 this.$message.error('获取订单失败')
+            })
+      },
+      //离座
+      setdesk(){
+        if(!this.ID) return this.$message.error('失败')
+        this.$axios({
+            url:'/Reservation/setdesk',
+            method:'post',
+            data:{
+              ID:this.ID
+            }
+            }).then(res=>{
+              this.shopdata={}
+              this.getDesk()
+            }).catch(err=>{
+                this.$message.error('失败')
             })
       }
     }

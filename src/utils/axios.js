@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {Message,Loading} from 'element-ui';
-
+import { getToken } from '@/utils/auth'
+import Router from '@/router'
 var instance = axios.create({
   timeout: 30000,
   baseURL : "/api",
@@ -29,6 +30,7 @@ var closeFullScreen = function(){
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {
   config.headers['X-Requested-With'] = 'XMLHttpRequest';
+  config.headers['token'] = getToken()
   if(!config.noLoading){
     openFullScreen();
   }
@@ -48,6 +50,10 @@ instance.interceptors.response.use(function (response) {
   //   return response.data;
   // }
   if(response.data.code===200){
+    return response.data.data;
+  }else if(response.data.code===403){
+    Message.error(response.data.msg);
+    Router.push({path: '/login'})
     return response.data.data;
   }else{
     Message.error(response.data.msg);

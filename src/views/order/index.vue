@@ -13,13 +13,13 @@
                 </el-dropdown>
                 <el-dropdown trigger="click" @command="handleCommand2">
                     <span class="el-dropdown-link">
-                        {{num}}<i class="el-icon-arrow-down el-icon--right"></i>
+                        {{num+'人'}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="1人">1人</el-dropdown-item>
-                        <el-dropdown-item command="2人">2人</el-dropdown-item>
-                        <el-dropdown-item command="3人">3人</el-dropdown-item>
-                        <el-dropdown-item command="4人">4人</el-dropdown-item>
+                        <el-dropdown-item :command="1">1人</el-dropdown-item>
+                        <el-dropdown-item :command="2">2人</el-dropdown-item>
+                        <el-dropdown-item :command="3">3人</el-dropdown-item>
+                        <el-dropdown-item :command="4">4人</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
                 <div class="iconfont icon-cangpeitubiao_shanchu" @click="delshop"></div>
@@ -127,7 +127,7 @@ export default {
     data(){
         return {
             way:"堂食",
-            num:"1人",
+            num:1,
             classify:['饮料','小吃','披萨'],
             desk:'',
             fukuanDialog:false,
@@ -275,7 +275,11 @@ export default {
           message: '当前暂无商品',
           type: 'warning'
         });
-        if(!this.desk) return this.$message({
+        if(!this.desk&&this.way==='堂食') return this.$message({
+          message: '请选择餐桌',
+          type: 'warning'
+        });
+        if(this.desk&&this.way!=='堂食') return this.$message({
           message: '请选择餐桌',
           type: 'warning'
         });
@@ -328,7 +332,7 @@ export default {
           message: '当前暂无商品',
           type: 'warning'
         });
-        if(!this.desk) return this.$message({
+        if(!this.desk&&this.way==='堂食') return this.$message({
           message: '请选择餐桌',
           type: 'warning'
         });
