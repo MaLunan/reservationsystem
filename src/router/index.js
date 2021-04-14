@@ -22,6 +22,11 @@ const routes = [
     name: '/login',
   },
   {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    name: '/register',
+  },
+  {
     path: '/diningTable',
     component: Layout,
     children: [

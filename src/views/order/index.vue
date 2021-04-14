@@ -70,9 +70,9 @@
                 <el-option
                 v-for="item,index in deskSelect"
                 :key="index"
-                :label="item.ID+'号桌'+(item.state!=='0'?'(在用)':'')"
+                :label="item.ID+'号桌'+(item.state==='1'?'(在用)':'')"
                 :value="item.ID"
-                :disabled="item.state!=='0'">
+                :disabled="item.state==='1'">
                 </el-option>
             </el-select>
             <span slot="footer" class="dialog-footer">

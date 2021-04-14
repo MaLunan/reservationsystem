@@ -1,7 +1,21 @@
 <template>
     <div class="box">
         <div class="header">
-           <el-button @click="isCollapse=!isCollapse" class="el-icon-s-fold" type='mini'></el-button>
+           <!-- <el-button @click="isCollapse=!isCollapse" class="el-icon-s-fold" type='mini'></el-button> -->
+           <router-link  to="/" class="el-icon-s-home home"></router-link>
+           <div class="head_rg_box">
+               <div class="circle">
+                   <img src="@/assets/image/touxiang.png" alt="">
+               </div>
+               <el-dropdown @command='login'>
+                    <span class="el-dropdown-link">
+                        管理员<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item>退出登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+           </div>
         </div>
         <div class="middle">
             <div class="leftmenu">
@@ -41,10 +55,17 @@
 </template>
 
 <script>
+import {removeToken} from '@/utils/auth.js'
 export default {
     data(){
         return {
             isCollapse: false
+        }
+    },
+    methods:{
+        login(){
+            removeToken('Admin-Token')
+            this.$router.push('/login')
         }
     }
 }
@@ -83,5 +104,29 @@ export default {
 .iconfont{
     font-size: 18px;
     color: white;
+}
+.home{
+    font-size: 24px;
+    line-height: 62px;
+    color: #409EFF;
+}
+.circle{
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 12px;
+}
+img{
+    width: 100%;
+    height: 100%;
+}
+.head_rg_box{
+    width: 200px;
+    position: absolute;
+    right: 20px;
+    top: 0;
+    display: flex;
+    align-items: center;
 }
 </style>

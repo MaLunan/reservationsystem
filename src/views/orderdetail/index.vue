@@ -79,9 +79,15 @@
             </div>
           </div>
           <div class="btn_box">
-            <el-button v-if="orderList.state!=='1'">结账</el-button>
-            <el-button v-else>退款</el-button>
+            <el-button class="btn" type="primary" v-if="orderList.state!=='1'" @click="payment">结账</el-button>
+            <el-button class="btn" type="primary" v-else @click="refund">退款</el-button>
           </div>
+          <el-dialog
+                title="付款"
+                :visible.sync="fukuanDialog"
+                width="30%">
+                <img style="width:100%" src="@/assets/image/fukuan.png" alt="">
+          </el-dialog>
       </div>
   </div>
 </template>
@@ -92,13 +98,65 @@ export default {
         return {
           active:'all',
           dataList:[],
-          orderList:{}
+          orderList:{},
+          fukuanDialog:false
         }
     },
     created () {
       this.getorder()
     },
     methods: {
+      //退款
+      refund(){
+        this.$confirm('将款项退回原账户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$axios({
+                url:'/Reservation/unsetorder',
+                method:'post',
+                data:{
+                    ordernumber:this.orderList.ordernumber,
+                }
+            }).then(res=>{
+                this.$message({
+                    message: '退款成功',
+                    type: 'success'
+                    });
+                this.getorder()
+            }).catch(err=>{
+            this.$message.error('退款失败')
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退款'
+          });          
+        });
+      },
+       //付款
+      payment(){
+        this.fukuanDialog=true
+        setTimeout(() => {
+            this.$axios({
+                url:'/Reservation/setorder',
+                method:'post',
+                data:{
+                    ordernumber:this.orderList.ordernumber,
+                }
+                }).then(res=>{
+                    this.$message({
+                        message: '付款成功',
+                        type: 'success'
+                        });
+                    this.getorder()
+                }).catch(err=>{
+                this.$message.error('付款失败')
+                })
+            this.fukuanDialog=false
+        }, 3000);
+      },
       //tab切换
       setTab(ind){
         this.active=ind
@@ -271,5 +329,11 @@ td{
   height: 64px;
   position: absolute;
   bottom: 24px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  .btn{
+    width: 40%;
+  }
 }
 </style>

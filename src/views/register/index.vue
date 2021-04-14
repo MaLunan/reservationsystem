@@ -2,7 +2,7 @@
   <div class="login">
         <el-card class="box-card">
             <div slot="header" class="head">
-                <span>订餐系统</span> <router-link to='/register'>注册</router-link>
+                <span>注册账号</span>
             </div>
             <div class="from_box">
             <el-form  label-position="right" :model="userFrom">
@@ -16,41 +16,45 @@
                         <i slot="prefix" class="el-input__icon el-icon-unlock"></i>
                     </el-input>
                 </el-form-item>
+                <el-form-item >
+                    <el-input  style="width:300px" v-model="userFrom.phone">
+                        <i slot="prefix" class="el-input__icon el-icon-phone"></i>
+                    </el-input>
+                </el-form-item>
             </el-form>
-            <el-button class="btn" type="primary" @click="login">登录</el-button>
+            <el-button class="btn" type="primary" @click="login">注册</el-button>
             </div>
         </el-card>
   </div>
 </template>
 
 <script>
-import {setToken} from '@/utils/auth.js'
 export default {
     data(){
         return{
             userFrom:{
-                username:'admin',
-                password:123456
+                username:'',
+                password:'',
+                phone:''
             }
         }
     },
     methods: {
       login(){
           this.$axios({
-                url:'/user/login',
+                url:'/user/register',
                 method:'post',
                 data:this.userFrom
             }).then(res=>{
-                setToken(res.token)
                 this.$message({
-                    message: '登录成功',
+                    message: '成功注册，马上跳转登录界面',
                     type: 'success'
                     });
                     setTimeout(()=>{
-                         this.$router.push({path:'/order'})
+                         this.$router.push({path:'/login'})
                     },1000)
             }).catch(err=>{
-                this.$message.error('登录失败')
+                this.$message.error('注册失败')
             })
       }  
     }
@@ -88,9 +92,5 @@ height: 100%;
 .btn{
     width: 100%;
     text-align: center;
-}
-a{
-    color:#409EFF;
-    float: right;
 }
 </style>

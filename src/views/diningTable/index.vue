@@ -7,8 +7,8 @@
                 <p class="ding_title">{{item.ID}}号桌</p>
                 <p class="ding_text">{{item.person}}人桌</p>
               </div>
-              <div :class="['dining_footer',item.state!=='0'?'dining_greencolor':'dining_bluecolor']">
-                {{item.state!=='0'?'在用':'空'}}
+              <div :class="['dining_footer',item.state==='1'?'dining_greencolor':'dining_bluecolor']">
+                {{item.state==='1'?'在用':'空'}}
               </div>
           </li>
         </ul>
@@ -53,8 +53,8 @@
                 <span class="left">结算金额：￥{{shopdata.amount}}</span><span class="right">就餐人数：{{shopdata.people}}</span>
               </div>
               <div class="content_btn">
-                <el-button @click="payment"  :disabled="shopdata.state!=='0'">{{shopdata.state!=='0'?'已结账':'去结账'}}</el-button>
-                <el-button v-if="shopdata.state!=='0'" @click="setdesk">离桌</el-button>
+                <el-button type="primary" @click="payment"  :disabled="shopdata.state!=='0'">{{shopdata.state!=='0'?'已结账':'去结账'}}</el-button>
+                <el-button type="primary" v-if="shopdata.state!=='0'" @click="setdesk">离桌</el-button>
               </div>
               <el-dialog
                 title="付款"
@@ -83,6 +83,7 @@ export default {
     methods: {
       //付款
       payment(){
+        this.fukuanDialog=true
         setTimeout(() => {
             this.$axios({
                 url:'/Reservation/setorder',
