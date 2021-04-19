@@ -22,6 +22,11 @@ const routes = [
     name: '/login',
   },
   {
+    path: '/400',
+    component: () => import('@/views/400/index'),
+    name: '/400',
+  },
+  {
     path: '/register',
     component: () => import('@/views/register/index'),
     name: '/register',
@@ -34,6 +39,17 @@ const routes = [
         path: '/diningTable',
         component: () => import('@/views/diningTable/index'),
         name: 'diningTable',
+      }
+    ]
+  },
+  {
+    path: '/Commodity',
+    component: Layout,
+    children: [
+      {
+        path: '/Commodity',
+        component: () => import('@/views/Commodity/index'),
+        name: 'Commodity',
       }
     ]
   },
@@ -62,8 +78,20 @@ const routes = [
   },
 ]
 
+
 const router = new VueRouter({
   routes
 })
-
+router.beforeEach((to, from, next) => {
+  if(to.path!=='/400'){
+    console.log('d')
+    if(window.navigator.onLine==true){
+      next()
+    } else{
+      next('/400')
+    }
+  }else{
+    next()
+  }
+  })
 export default router

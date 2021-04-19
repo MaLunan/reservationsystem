@@ -24,7 +24,7 @@
                   <p class="money">
                     ￥{{item.amount}}
                   </p>
-                  <p class="date">{{item.creation}}</p>
+                  <p class="date">{{formatDate(item.creation)}}</p>
               </div>
             </li>
           </ul>
@@ -187,6 +187,20 @@ export default {
       //切换订单
       setorder(val){
         this.orderList=val
+      },
+      formatDate(timestamp) {
+        var date = new Date(timestamp);
+        var year = date.getFullYear();
+        var month = this.addZero(date.getMonth() + 1);
+        var day = this.addZero(date.getDate());
+        var hours = this.addZero(date.getHours());
+        var minutes = this.addZero(date.getMinutes());
+        var seconds = this.addZero(date.getSeconds());
+        // return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+        return year + '-' + month + '-' + day;
+      },
+      addZero(num) {
+        return num < 10 ? '0' + num : num;
       }
     }
 }

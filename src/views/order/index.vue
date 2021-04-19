@@ -116,7 +116,7 @@
       </div>
       <div class="right_box">
               <ul class="tab_ul">
-                  <li @click="selectTab(index)" v-for="(item,index) in classify" :key="index" :class="['tab_li',tabActive===index?'tab_active':'']">{{item}}</li>
+                  <li @click="selectTab(index,item)" v-for="(item,index) in classify" :key="index" :class="['tab_li',tabActive===index?'tab_active':'']">{{item}}</li>
               </ul>
       </div>
   </div>
@@ -128,6 +128,7 @@ export default {
         return {
             way:"堂食",
             num:1,
+            ify:'饮料',
             classify:['饮料','小吃','披萨'],
             desk:'',
             fukuanDialog:false,
@@ -138,120 +139,9 @@ export default {
             desks:'',
             deskSelect:[],
             foodList:[
-                [
-                    {
-                       label:'可乐',
-                       value :'4.2',
-                       num:0
-                    },{
-                       label:'学霸',
-                       value :'3.1',
-                       num:0
-                    },{
-                       label:'橙汁',
-                       value :'4',
-                       num:0
-                    },{
-                       label:'牛奶',
-                       value :'5',
-                       num:0
-                    },
-                    
-                ],
-                [
-                    {
-                       label:'小饼',
-                       value :3,
-                       num:0
-                    },{
-                       label:'煎饼',
-                       value :6,
-                       num:0
-                    },{
-                       label:'炸鸡',
-                       value :8,
-                       num:0
-                    },{
-                       label:'烤鱼',
-                       value :10.2,
-                       num:0
-                    },
-                ],
-                [
-                    {
-                       label:'榴莲',
-                       value :2.2,
-                       num:0
-                    },{
-                       label:'香肠',
-                       value :4.2,
-                       num:0
-                    },{
-                       label:'牛肉',
-                       value :6,
-                       num:0
-                    },{
-                       label:'辣椒',
-                       value :9,
-                       num:0
-                    },{
-                       label:'榴莲2',
-                       value :2.2,
-                       num:0
-                    },{
-                       label:'香肠3',
-                       value :4.2,
-                       num:0
-                    },{
-                       label:'牛肉4',
-                       value :6,
-                       num:0
-                    },{
-                       label:'辣椒5',
-                       value :9,
-                       num:0
-                    },{
-                       label:'榴莲7',
-                       value :2.2,
-                       num:0
-                    },{
-                       label:'香肠8',
-                       value :4.2,
-                       num:0
-                    },{
-                       label:'牛肉9',
-                       value :6,
-                       num:0
-                    },{
-                       label:'辣椒07',
-                       value :9,
-                       num:0
-                    },{
-                       label:'牛肉46',
-                       value :6,
-                       num:0
-                    },{
-                       label:'辣椒55',
-                       value :9,
-                       num:0
-                    },{
-                       label:'榴莲74',
-                       value :2.2,
-                       num:0
-                    },{
-                       label:'香肠83',
-                       value :4.2,
-                       num:0
-                    },{
-                       label:'牛肉91',
-                       value :6,
-                       num:0
-                    },{
-                       label:'辣椒02',
-                       value :9,
-                       num:0
-                    },
-                ]
+                [],
+                [],
+                []
             ],
             tabActive:0,
             shopdata:{}
@@ -267,8 +157,21 @@ export default {
             return num.toFixed(1)
         }
     },
-    
+    mounted(){
+        this.getCommodity()
+    },
     methods: {
+        //获取商品信息
+        getCommodity(){
+            this.$axios({
+                    url:'/Reservation/getcommodity',
+                    method:'post',
+            }).then(res=>{
+                this.foodList=res
+            }).catch(err=>{
+               console.log(err)
+            })
+        }, 
         //付款
         payment(){
             if(Object.keys(this.shopdata).length===0) return this.$message({
@@ -370,8 +273,9 @@ export default {
             this.num=command
         },
         //选择小吃分类
-        selectTab(ind){
+        selectTab(ind,classify){
             this.tabActive=ind
+            this.ify=classify
         },
         //备注弹窗
         openRemark(){

@@ -44,6 +44,10 @@
                     <i class="iconfont icon-chongzhi1"></i>
                     <span slot="title">订单详情</span>
                 </el-menu-item>
+                <el-menu-item index="/Commodity">
+                    <i class="iconfont icon-swticondingcan"></i>
+                    <span slot="title">餐品管理</span>
+                </el-menu-item>
                 </el-menu>
             </div>
             <div class="content">
